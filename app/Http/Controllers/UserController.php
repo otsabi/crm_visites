@@ -149,7 +149,7 @@ class UserController extends Controller
         $user->nom        = $req->input('user_nom');
         $user->prenom     = $req->input('user_prenom');
         $user->title      = $req->input('user_title');
-        $user->email = $req->input('user_email');
+        $user->email      = $req->input('user_email');
         $user->tel        = $req->input('user_tel');
         $user->ville_id   = $req->input('user_ville');
         $user->role_id    = $req->input('user_role');

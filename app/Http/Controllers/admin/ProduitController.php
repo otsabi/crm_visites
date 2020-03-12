@@ -108,7 +108,7 @@ class ProduitController extends Controller
 
 
 
-        return view('admin.products.product_edit',compact(['produit','gammes','produit_gammes']));
+        return view('admin.products.product_edit',compact(['produit','produit_gammes','gammes']));
 
     }
 
@@ -124,16 +124,16 @@ class ProduitController extends Controller
         $produit = Produit::findOrfail($id);
 
         $validator = Validator::make($request->all(),[
+
             'code'   =>'required|min:3',
             'libelle'=>'required|min:3',
             'price'=>'required|numeric|between:1.00,9999.99',
-            'gamme'=>'required|array',
-            'gamme.*'=>'exists:gammes,gamme_id',
+            'produit_gamme'=>'required|array|exists:gammes,gamme_id',
             ],
             [   'code*'    =>'Code Produit invalid',
                 'libelle.*'=>'libelle produit invalid.',
                 'price.*'  =>'prix incorrect',
-                'gamme.*'  =>'gamme invalide ou n\'existe pas',
+                'produit_gamme.*'  =>'gamme invalide ou n\'existe pas',
             ]
         );
 
@@ -141,10 +141,11 @@ class ProduitController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        $produit->code_produit = $request->input('code');
-        $produit->libelle = $request->input('libelle');
-        $produit->prix = $request->input('price');
-        $produit->gammes()->sync($request->input('gamme'));
+        $produit->code_produit  = $request->input('code');
+        $produit->libelle       = $request->input('libelle');
+        $produit->prix          = $request->input('price');
+
+        $produit->gammes()->sync($request->input('produit_gamme'));
 
         $produit->save();
 

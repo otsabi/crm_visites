@@ -54,12 +54,13 @@
 
                     </div>
                     <div class="col">
+
                         <label for="gamme">Gamme</label>
-                        <select name="gamme" id="gamme" class="form-control {{$errors->has('gamme') ? 'is-invalid':''}}" required>
-                            <option value="">Choisir...</option>
-                            @foreach($gammes as $gamme)
-                            <option value="{{$gamme->gamme_id}}" {{ $gamme->gamme_id == old('gamme') ? 'selected' : '' }} >{{$gamme->libelle}}</option>
-                            @endforeach
+                        <select class="form-control selectpicker {{$errors->has('gamme') ? 'is-invalid':''}}" name="gamme[]" id="gamme" class="" multiple >
+                                @foreach ($gammes as $gamme)
+                                    <option value="{{$gamme->gamme_id}}" {{ $gamme->gamme_id == old('gamme') ? 'selected' : '' }}> {{$gamme->libelle}} </option>
+                                @endforeach
+
                         </select>
                     </div>
                 </div>

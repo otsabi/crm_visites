@@ -42,38 +42,38 @@
 
                         <table id="order-listing" class="table table-bordered">
                                 <thead>
-                                  <tr>
-                                       <th>CODE</th>
-                            <th>Libelle</th>
-                            <th>Prix</th>
-                            <th>Gamme</th>
-                            <th>Actions</th>
-                                  </tr>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Libelle</th>
+                                        <th>Prix</th>
+                                        <th>Gamme</th>
+                                        <th>Actions</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                          @foreach($produits as $produit)
-                                <tr>
-                                    <td>{{$produit->code_produit}}</td>
-                                    <td>{{$produit->libelle}}</td>
-                                    <td>{{$produit->prix}}</td>
-                                    <td>
-                                    @if(!$produit->gammes->isEmpty())
-                                    <span class="badge badge-secondary">@foreach($produit->gammes as $gamme) {{ $gamme->libelle }} @endforeach</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm btn-secondary dropdown-toggle p-2" type="button" id="dropdown{{$produit->produit_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
-                                            <div class="dropdown-menu mt-0" aria-labelledby="dropdown{{$produit->produit_id}}">
-                                                <a class="dropdown-item" href="{{route('admin.products.edit',['product' => $produit->produit_id])}}"> <i class="mdi mdi-pencil"></i> Modifier</a>
-                                                <a class="dropdown-item" data-toggle="modal" data-target="#deleteModel" data-whatever="{{$produit->produit_id}}" data-produit="{{$produit->code_produit}} {{$produit->libelle}}"> <i class="mdi mdi-trash-can"></i> Supprimer</a>
+                                    <tr>
+                                        <td>{{$produit->code_produit}}</td>
+                                        <td>{{$produit->libelle}}</td>
+                                        <td>{{$produit->prix}}</td>
+                                        <td>
+                                        @if(!$produit->gammes->isEmpty())
+                                        <span class="badge badge-secondary">@foreach($produit->gammes as $gamme) {{ $gamme->libelle }} @endforeach</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-secondary dropdown-toggle p-2" type="button" id="dropdown{{$produit->produit_id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</button>
+                                                <div class="dropdown-menu mt-0" aria-labelledby="dropdown{{$produit->produit_id}}">
+                                                    <a class="dropdown-item" href="{{route('admin.products.edit',['product' => $produit->produit_id])}}"> <i class="mdi mdi-pencil"></i> Modifier</a>
+                                                    <a class="dropdown-item" data-toggle="modal" data-target="#deleteModel" data-whatever="{{$produit->produit_id}}" data-produit="{{$produit->code_produit}} {{$produit->libelle}}"> <i class="mdi mdi-trash-can"></i> Supprimer</a>
 
-                                                {{-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModel" data-whatever="{{$produit->produit_id}}"  data-info="{{$produit->code_produit. ' - ' . $produit->libelle . ' - Gamme : ' . $produit->gamme->libelle}}"><i class="mdi mdi-trash-can"></i>&nbsp;Supprimer</a> --}}
+                                                    {{-- <a class="dropdown-item" data-toggle="modal" data-target="#deleteModel" data-whatever="{{$produit->produit_id}}"  data-info="{{$produit->code_produit. ' - ' . $produit->libelle . ' - Gamme : ' . $produit->gamme->libelle}}"><i class="mdi mdi-trash-can"></i>&nbsp;Supprimer</a> --}}
 
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                         </table>
