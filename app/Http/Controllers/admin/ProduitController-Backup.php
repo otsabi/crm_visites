@@ -25,8 +25,9 @@ class ProduitController extends Controller
     public function index()
     {
         $produits = Produit::all();
+        $gammes = Gamme::select('gamme_id','libelle')->orderBy('created_at')->get();
 
-        return view('admin.products.product_list',compact(['produits',]));
+        return view('admin.products.products',compact(['produits','gammes']));
     }
 
     /**
@@ -37,9 +38,6 @@ class ProduitController extends Controller
     public function create()
     {
         //
-        $gammes   = Gamme::select('gamme_id','libelle')->orderBy('libelle')->get();
-
-        return view('admin.products.product_add',compact(['gammes']));
     }
 
     /**
@@ -71,11 +69,11 @@ class ProduitController extends Controller
 
         $produit = new Produit();
         $produit->code_produit = $request->input('code');
+        $produit->gamme_id = $request->input('gamme');
         $produit->libelle = $request->input('libelle');
         $produit->prix = $request->input('price');
 
         $produit->save();
-        $produit->gammes()->attach($request->input('gamme'));
 
         return redirect()->back()->with('status','Produit crée avec succès.');
     }
@@ -100,16 +98,6 @@ class ProduitController extends Controller
     public function edit($id)
     {
         //
-        $produit = Produit::findOrfail($id);
-
-        $produit_gammes =  $produit->gammes->pluck('gamme_id')->toArray();
-
-        $gammes   = Gamme::select('gamme_id','libelle')->orderBy('libelle')->get();
-
-
-
-        return view('admin.products.product_edit',compact(['produit','gammes','produit_gammes']));
-
     }
 
     /**
@@ -124,16 +112,14 @@ class ProduitController extends Controller
         $produit = Produit::findOrfail($id);
 
         $validator = Validator::make($request->all(),[
-            'code'   =>'required|min:3',
-            'libelle'=>'required|min:3',
-            'price'=>'required|numeric|between:1.00,9999.99',
-            'gamme'=>'required|array',
-            'gamme.*'=>'exists:gammes,gamme_id',
+            'up_libelle'=>'required|min:3',
+            'up_price'=>'required|numeric|between:1.00,9999.99',
+            'up_gamme' => 'required|exists:gammes,gamme_id'
             ],
-            [   'code*'    =>'Code Produit invalid',
-                'libelle.*'=>'libelle produit invalid.',
-                'price.*'  =>'prix incorrect',
-                'gamme.*'  =>'gamme invalide ou n\'existe pas',
+            [
+                'up_libelle.*'=>'libelle produit invalid.',
+                'up_price.*'=>'prix incorrect',
+                'up_gamme.*'=>'gamme invalide ou n\'existe pas',
             ]
         );
 
@@ -141,15 +127,13 @@ class ProduitController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
-        $produit->code_produit = $request->input('code');
-        $produit->libelle = $request->input('libelle');
-        $produit->prix = $request->input('price');
-        $produit->gammes()->sync($request->input('gamme'));
+        $produit->gamme_id = $request->input('up_gamme');
+        $produit->libelle = $request->input('up_libelle');
+        $produit->prix = $request->input('up_price');
 
         $produit->save();
 
-        return redirect()->route('admin.products.index')->with('status','Vos modifications sont enregistrées.');
-
+        return redirect()->back()->with('status','Vos modifications sont enregistrées.');
     }
 
     /**
@@ -160,9 +144,9 @@ class ProduitController extends Controller
      */
     public function destroy($id)
     {
-        $produit = Produit::findOrfail($id);
+        $pr = Produit::findOrfail($id);
         try {
-            $produit->delete();
+            $pr->delete();
             return redirect()->back()->with('status','Produit supprimé avec succès.');
         }
         catch (QueryException $exception){

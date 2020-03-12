@@ -140,11 +140,19 @@
 
                         <div class="dropdown-divider"></div>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{route('admin.products.index')}}">
+                            <a class="nav-link" data-toggle="collapse" href="#produits" aria-expanded="false" aria-controls="produits">
                                 <i class="mdi mdi-pill menu-icon"></i>
                                 <span class="menu-title">Produits</span>
+                                <i class="menu-arrow"></i>
                             </a>
+                            <div class="collapse" id="produits" style="">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item"><a class="nav-link" href="{{route('admin.products.index')}}">Liste des Produits </a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{route('admin.products.create')}}">Nouveau Produit</a></li>
+                                </ul>
+                            </div>
                         </li>
+
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{route('admin.gammes.index')}}">
