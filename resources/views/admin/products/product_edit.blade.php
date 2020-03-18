@@ -47,10 +47,10 @@
                         </div>
                         <div class="col-4">
 
-                            <label for="gamme">Gamme</label>
-                            <select class="form-control" name="gamme" id="gamme"  required>
+                            <label for="produit_gamme">Gamme</label>
+                            <select class="form-control selectpicker" name="produit_gamme[]" id="gamme"  multiple required>
                                 @foreach ($gammes as $gamme)
-                                    <option value="{{$gamme->gamme_id}}" {{$gamme->gamme_id === $gamme->gamme_id ? 'selected': '' }}> {{$gamme->libelle}} </option>
+                                  <option value="{{$gamme->gamme_id}}" {{ in_array($gamme->gamme_id, $produit_gammes ) ? 'selected' : ''}} > {{$gamme->libelle}} </option>
                                 @endforeach
 
                             </select>
