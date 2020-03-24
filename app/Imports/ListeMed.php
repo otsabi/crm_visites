@@ -2,117 +2,92 @@
 
 namespace App\Imports;
 
-use App\Specialite;
+use App\Medecin;
+use App\Imports\Functions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-//use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-//use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-//use Maatwebsite\Excel\Concerns\WithConditionalSheets;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-//use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
+
 
 
 //use Maatwebsite\Excel\Concerns\WithDates;
 
 //, WithMultipleSheets
 //, SkipsUnknownSheets
-class ListeMed implements ToCollection, WithCalculatedFormulas, WithHeadingRow
+class ListeMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 {
-    //use WithConditionalSheets;
-
-    /*public function conditionalSheets(): array
-    {
-        return [
-            'Rapport Med' => new RapportMed(),
-            'Worksheet 2' => new SecondSheetImport(),
-            //'Worksheet 3' => new ThirdSheetImport(),
-        ];
-    }*/
-
-    public function sheets(): array
-    {
-        return [
-            'Rapport Med' => new FileImport(),
-            'Liste Med' => new FileImport(),
-        ];
-    }
-
-    // public function onUnknownSheet($sheetName)
-    // {
-    //     // E.g. you can log that a sheet was not found.
-    //     //info("Sheet {$sheetName} was skipped");
-    //     dd("ERROR : {$sheetName} is not found !");
-    // }
-
-    /*public function chunkSize(): int
-    {
-        return 1000;
-    }
-
-    public function batchSize(): int
-    {
-        return 1000;
-    }*/
-
-
-
 
     public function Collection(Collection $collection)
     {
 
-        /*$collection->each(function ($item, $key) {
-            //echo $item['nom_prenom'].'<br><br><br><br>';
-            echo $key.'<br><br><br><br>';
-        });*/
+        // //******************  BEGIN MEDECIN NAME  ******************
+        //     //SELECT ALL MEDECIN NAME FROM DB
+        //     $medecins_db = Medecin::select(
+        //         DB::raw('UPPER(CONCAT(nom," ",prenom)) as nom_prenom')
+        //     )
+        //     ->pluck('nom_prenom');
+        // //******************  END MEDECIN NAME  ******************
+    
+        // //******************  BEGIN FILTER MEDECIN NAME  ******************
+        //     //DELETE ANY SPACE ON THE END OF [ nom prenom ] USING RTRIM FUNCTION
+        //     //FILTER JUST MEDECIN NAME WHITCH DOES NOT ...
+        //     //... EXISTS ON DB FROM EXCEL FILE
+        //     //IGNORE COLUMN [ nom prenom ] IF IT HAS NULL VALUE
+        //     $medecins_excel = $collection->map(function ($item) {
+        //         $item['nom'] = mb_strtoupper(rtrim($item['nom']));
+        //         $item['prenom'] = mb_strtoupper(rtrim($item['prenom']));
+        //         $item['nom_prenom'] = $item['nom'].' '.$item['prenom'];
+        //     });
+       
+        //     $medecins_excel = $collection->whereNotIn('nom_prenom', $medecins_db)
+        //                                  ->whereNotIn('nom_prenom', " ");
+        // //******************  END FILTER MEDECIN NAME  ******************
 
-        //foreach ($collections->toArray() as $collection){
-             //$collection->dd();
-             //$collection[$key]['specialite'];
-             //$collection[$key]['etablissement'];
 
-            //dd($collection);
-            //print_r(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($collection['date_de_visite'])->format('d-m-Y'));
-           //echo $collection['nom_prenom'];
-            /*print_r($collection['specialite']);
-            print_r($collection['etablissement']);
-            print_r($collection['potentiel']);
-            print_r($collection['montant_inv_precedents']);
-            print_r($collection['zone_ville']);
-            print_r($collection['p1_presente']);
-            print_r($collection['p1_feedback']);
-            print_r($collection['p1_ech']);
-            print_r($collection['p2_presente']);
-            print_r($collection['p2_feedback']);
-            print_r($collection['p2_ech']);
-            print_r($collection['p3_presente']);
-            print_r($collection['p3_feedback']);
-            print_r($collection['p3_ech']);
-            print_r($collection['p4_presente']);
-            print_r($collection['p4_feedback']);
-            print_r($collection['p4_ech']);
-            print_r($collection['p5_presente']);
-            print_r($collection['p5_feedback']);
-            print_r($collection['p5_ech']);
-            print_r($collection['materiel_promotion']);
-            print_r($collection['invitation_promise']);
-            print_r($collection['planrealise']);
-            print_r($collection['visite_individuelledouble']);*/
-            //echo "#############################";
-       // }
+        // if (!$medecins_excel->isEmpty()) {
+            
+        //     //ADD MEDECIN, IF THERE ID ANY NEW MEDECIN DOES NOT EXISTS ON DB
+        //     $medecins_excel->each(function ($item) {
 
-         //return dd($collections->toArray());
+        //         //******************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  ******************
+        //             $ID_USER = 2;
+        //             $created_by="EL MEHDI AIT FAKIR";
+        //         //******************  END  ******************
 
-        /*$collections->each(function ($item) {
-            print_r($item);
-        });*/
 
-        /*$post = Specialite::latest('specialite_id')->first();
-        dd($post->libelle);*/
+        //         //******************  BEGIN INFO OF MEDECIN  ******************
+        //             $nom = mb_strtoupper($item['nom']);
+        //             $prenom = mb_strtoupper($item['prenom']);
+        //             $adresse = $item['adresse'];
+        //             $tel = $item['tel'];
+        //             $etablissement = mb_strtoupper($item["etablissement"]);
+        //             $potentiel = $item['potentiel'];        
+        //             $zone = mb_strtoupper($item["zone_sous_secteur"]);
+        //         //******************  END INFO OF MEDECIN ******************
+            
+        //         //******************  BEGIN RETURN ID OF VILLE  ******************
+        //             $ville_id = Functions::search_ville(mb_strtoupper($item["ville"]));
+        //         //******************  END RETURN ID OF VILLE  ******************
+            
+        //         //******************  BEGIN RETURN ID OF SPECIALISTE  ******************
+        //             $specialite_id = Functions::search_specialite(mb_strtoupper($item["specialite"]));
+        //         //******************  END RETURN ID OF SPECIALISTE  ******************
+            
+
+        //     Functions::create_medecin($nom, $prenom, $adresse, $tel, $etablissement, $potentiel, $zone, $ville_id, $ID_USER, $specialite_id, $created_by);
+    
+        //     });
+
+        // }else{
+        //     var_dump("THERE IS ANY MEDECIN TO ADD !");
+        // }
+
+        // echo "<br> ############# ListeMed ############# <br>";
+        // var_dump($collection);
+        // echo "<br> ########################## <br>";
 
     }
-
-
 
 }

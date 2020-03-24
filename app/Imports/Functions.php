@@ -2,28 +2,15 @@
 
 namespace App\Imports;
 
+use Illuminate\Support\Facades\DB;
 use App\Feedback;
 use App\Medecin;
 use App\Produit;
 use App\VisiteMedical;
 use App\VmedProduit;
-use Illuminate\Support\Facades\DB;
 use App\Specialite;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
-//use Maatwebsite\Excel\Concerns\ToModel;
-//use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-//use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-//use Maatwebsite\Excel\Concerns\WithConditionalSheets;
-//use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-//use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
+use App\Ville;
 
-
-//use Maatwebsite\Excel\Concerns\WithDates;
-
-//, WithMultipleSheets
-//, SkipsUnknownSheets
 class Functions
 {
     static public function search_medecin_id($value){
@@ -77,16 +64,22 @@ class Functions
 
     static public function create_feedback($feedback){
         /*
-         * 1- insert new Feedback
+         * 0- verify if exist
+         * 1- [ insert new Feedback if not exist ]
          * 2- return last id of Feedback
          */
 
-        $new_feedback = new Feedback();
-        $new_feedback->libelle = $feedback;
-        $new_feedback->save();
+        $feedback_exist = Feedback::where('libelle', $feedback)->first();
+        if($feedback_exist){
+            return $feedback_exist->feedback_id;
+        }else{
+            $new_feedback = new Feedback();
+            $new_feedback->libelle = $feedback;
+            $new_feedback->save();
 
-        if ($new_feedback){
-            return $new_feedback->feedback_id;
+            if ($new_feedback){
+                return $new_feedback->feedback_id;
+            }
         }
 
     }
@@ -103,5 +96,50 @@ class Functions
         $new_visite_produit->nbr_ech=$nbr_ech;
         $new_visite_produit->save();
     }
+
+    static public function create_medecin($nom, $prenom, $adresse, $tel, $etablissement, $potentiel, $zone, $ville_id, $user_id, $specialite_id, $created_by){
+        /*
+         * 1- catche NAME of MEDECIN, AND ALL INFOs
+         * 2- insert into table medecins
+         */
+        $new_medecin = new Medecin();
+        $new_medecin->nom = $nom;
+        $new_medecin->prenom = $prenom;
+        $new_medecin->adresse = $adresse;
+        $new_medecin->tel = $tel;
+        $new_medecin->etablissement = $etablissement;
+        $new_medecin->potentiel = $potentiel;
+        $new_medecin->zone_med = $zone;
+        $new_medecin->ville_id = $ville_id;
+        $new_medecin->user_id = $user_id;
+        $new_medecin->specialite_id = $specialite_id;
+        $new_medecin->created_by = $created_by;
+
+        //var_dump($new_medecin);
+        $new_medecin->save();
+    }
+
+    static public function search_ville($value){
+        /*
+         * 1- catche NAME of VILLE
+         * 2- return ID of VILLE
+         */
+        $ville = Ville::where("libelle",strtoupper($value))->first();
+        if ($ville){
+            return $ville->ville_id;
+        }
+    }
+
+    static public function search_specialite($value){
+        /*
+         * 1- catche NAME of specialite
+         * 2- return ID of specialite
+         */
+        $specialite = Specialite::where("code",strtoupper($value))->first();
+        if ($specialite){
+            return $specialite->specialite_id;
+        }
+    }
+
 
 }

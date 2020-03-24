@@ -3,167 +3,205 @@
 namespace App\Imports;
 
 use App\Imports\Functions;
-use App\Medecin;
-use App\Produit;
-use App\Specialite;
+// use App\Medecin;
+// use App\Produit;
+// use App\Specialite;
+use App\VisiteMedical;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-//use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-//use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
-//use Maatwebsite\Excel\Concerns\WithConditionalSheets;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-//use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Maatwebsite\Excel\Concerns\WithMapping;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-
-//use Maatwebsite\Excel\Concerns\WithDates;
-
-//, WithMultipleSheets
-//, SkipsUnknownSheets
-class RapportMed implements ToCollection, WithCalculatedFormulas, WithHeadingRow
+class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 {
-    //use WithConditionalSheets;
-
-    /*public function conditionalSheets(): array
-    {
-        return [
-            'Rapport Med' => new RapportMed(),
-            'Worksheet 2' => new SecondSheetImport(),
-            //'Worksheet 3' => new ThirdSheetImport(),
-        ];
-    }*/
-
-    public function sheets(): array
-    {
-        return [
-            'Rapport Med' => new FileImport(),
-            'Liste Med' => new FileImport(),
-        ];
-    }
-
-
-
-    // public function onUnknownSheet($sheetName)
-    // {
-    //     // E.g. you can log that a sheet was not found.
-    //     //info("Sheet {$sheetName} was skipped");
-    //     dd("ERROR : {$sheetName} is not found !");
-    // }
-
-    /*public function chunkSize(): int
-    {
-        return 1000;
-    }
-
-    public function batchSize(): int
-    {
-        return 1000;
-    }*/
-
-
 
     public function Collection(Collection $collection)
     {
         /*
-         * i will use ID USER = 2 witch is EL MEHDI ID
+         * i will use in this Test [ ID USER = 2 ] witch is EL MEHDI ID
          * */
 
+        //*****************  BEGIN CATCH LAST DATE  *****************
+            //CATCH DATE OF LAST INSERTED VISITE AND CHANGE FORMAT
+            $last_date_visite_DB = VisiteMedical::select('date_visite')
+            ->where('user_id',2)
+            ->whereIn('etat', ['Réalisé', 'Réalisé hors Plan'])
+            ->groupBy('date_visite')
+            ->orderBy('date_visite', 'desc')
+            ->first();
+        //*****************  END CATCH LAST DATE  *****************
 
-        $tab = $collection->whereIn('planrealise', ['Réalisé', 'Réalisé hors Plan']);
+            if(!empty($last_date_visite_DB)){
+                //IMPORTANT !!! TO VERIFY IF THERE IS ANY DATA ON DATABASE
+                //*****************  BEGIN CHANGE FORMAT  *****************
+                    //CHANGE FORMAT TO DATE
+                    $last_date_visite_DB = $last_date_visite_DB['date_visite']->format('Y-m-d');
+                //*****************  BEGIN CHANGE FORMAT  *****************
 
-        $tab->each(function ($item) {
+                //*****************  BEGIN CATCH VISITES  *****************
+                    //AFTER CATCH DATE OF LAST INSERTED VISITE
+                    //WE IGNORE OTHER VISITES LESS THAN $last_date_visite_DB  ON COLLECTION
+                    $visites = $collection->where('date_de_visite', '>',Date::PHPToExcel( $last_date_visite_DB ))
+                    ->whereIn('planrealise', ['Réalisé', 'Réalisé hors Plan']);
+                //*****************  END CATCH VISITES  *****************
 
-            //#################  CHANGE IT INTO INFO OF AUTH USER [AFTER]  #################
-            $ID_USER = 2;
-            $created_by="EL MEHDI AIT FAKIR";
-            //#################  END  #################
-
-            //#################  BEGIN DECLARATION  #################
-            $produit_id = NULL;
-            $feedback_id = NULL;
-            $nbr_ech = 0;
-            //#################  END DECLARATION  #################
-
-            // BEGIN MEDCIN
-            //Y-m-d
-
-            $medecin_id = Functions::search_medecin_id($item['nom_prenom']);
-            $etat = $item['planrealise'];
-            $date_visite = Date::excelToDateTimeObject($item['date_de_visite'])->format('Y-m-d');
-            $last_visite_id = Functions::create_visite($ID_USER, $medecin_id, $etat, $date_visite, $created_by);
-            //echo 'visite : '.$last_visite_id.'<br>';
-            //NJBED ID MEDCIN
-            //echo $item['specialite'].'<br>';
-            //echo $item['etablissement'].'<br>';
-            //echo $item['potentiel'].'<br>';
-            //echo $item['montant_inv_precedents'].'<br>';
-            //echo $item['zone_ville'].'<br>';
-            // END MEDCIN
-
-            // #################  BEGIN PRODUIT 01  #################
-            if (!empty($item['p1_presente'])){
-
-                $produit_id = Functions::search_product_id($item['p1_presente']);
-                    //echo 'Produit : '.$produit_id.'<br>';
-                if(!empty($item['p1_feedback'])){
-
-                    $feedback_id = Functions::create_feedback($item['p1_feedback']);
-                    //echo 'Feedback : '.$feedback_id.'<br>';
+                if ($visites->isEmpty()) {
+                    //IF THERE IS NO VISITE TO ADD TO DATABASE SHOW ALERT MESSAGE !
+                    dd("NOTHING TO ADD TO DATABASE !");
                 }
-                if(!empty($item['p1_ech'])){
-                    $nbr_ech = $item['p1_ech'];
-                    //echo 'nbr ech : '.$nbr_ech.'<br>';
+            }else{
+                //*****************  BEGIN CATCH VISITES [REALISE / REALISE HORS PLAN]  *****************
+                $visites = $collection->whereIn('planrealise', ['Réalisé', 'Réalisé hors Plan']);
+                //*****************  END CATCH VISITES [REALISE / REALISE HORS PLAN] *****************
+            }
+
+
+                if(!empty($visites)){
+                    //TO VERIFY IF THERE IS ANY LINE OF VISITE TO ADD INTO DATABASE
+                    $visites->each(function ($item) {
+
+                        //*****************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  *****************
+                            $ID_USER = 2;
+                            $created_by="EL MEHDI AIT FAKIR";
+                        //*****************  END  *****************
+
+                        //*****************  BEGIN MEDECIN  *****************
+                            //SEARCH FOR NAME OF MEDECIN AND RETURN THE ID
+                            $medecin_id = Functions::search_medecin_id($item['nom_prenom']);
+                        //*****************  END MEDECIN  *****************
+
+                        //*****************  BEGIN ETAT  *****************
+                            //PLAN - REALISE - REALISE HORS PLAN
+                            $etat = $item['planrealise'];
+                        //*****************  END ETAT  *****************
+
+                        //*****************  BEGIN DATE  *****************
+                            //CHANGE FORMAT OF DATE
+                            $date_visite = Date::excelToDateTimeObject($item['date_de_visite'])->format('Y-m-d');
+                        //*****************  END DATE  *****************
+
+                        //*****************  BEGIN VISITE  *****************
+                            //CREATE NEW VISITE AND RETURN THE ID
+                            $last_visite_id = Functions::create_visite($ID_USER, $medecin_id, $etat, $date_visite, $created_by);
+                        //*****************  END VISITE  *****************
+
+                        //*****************  BEGIN DECLARATION  *****************
+                        $produit_id = NULL;
+                        $feedback_id = NULL;
+                        $nbr_ech = 0;
+                        //*****************  END DECLARATION  *****************
+
+                        // *****************  BEGIN PRODUIT 01  *****************
+                            //VERIFY [NAME_PRODUCT, FEEDBACK_PRODUCT, NBR_ECH] AND INSERT THEM ON DATABASE
+                            if (!empty($item['p1_presente'])){
+
+                                $produit_id = Functions::search_product_id($item['p1_presente']);
+                                if(!empty($item['p1_feedback'])){
+                                    $feedback_id = Functions::create_feedback($item['p1_feedback']);
+                                }
+                                if(!empty($item['p1_ech'])){
+                                    $nbr_ech = $item['p1_ech'];
+                                }
+                                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
+                            }
+                        // *****************  END PRODUIT 01  *****************
+
+                        //*****************  BEGIN DECLARATION  *****************
+                        $produit_id = NULL;
+                        $feedback_id = NULL;
+                        $nbr_ech = 0;
+                        //*****************  END DECLARATION  *****************
+
+                        // *****************  BEGIN PRODUIT 02  *****************
+                            //VERIFY [NAME_PRODUCT, FEEDBACK_PRODUCT, NBR_ECH] AND INSERT THEM ON DATABASE
+                            if (!empty($item['p2_presente'])){
+
+                                $produit_id = Functions::search_product_id($item['p2_presente']);
+                                if(!empty($item['p2_feedback'])){
+                                    $feedback_id = Functions::create_feedback($item['p2_feedback']);
+                                }
+                                if(!empty($item['p2_ech'])){
+                                    $nbr_ech = $item['p2_ech'];
+                                }
+                                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
+                            }
+                        // *****************  END PRODUIT 02  *****************
+
+                        //*****************  BEGIN DECLARATION  *****************
+                        $produit_id = NULL;
+                        $feedback_id = NULL;
+                        $nbr_ech = 0;
+                        //*****************  END DECLARATION  *****************
+
+                        // *****************  BEGIN PRODUIT 03  *****************
+                            //VERIFY [NAME_PRODUCT, FEEDBACK_PRODUCT, NBR_ECH] AND INSERT THEM ON DATABASE
+                            if (!empty($item['p3_presente'])){
+
+                                $produit_id = Functions::search_product_id($item['p3_presente']);
+                                if(!empty($item['p3_feedback'])){
+                                    $feedback_id = Functions::create_feedback($item['p3_feedback']);
+                                }
+                                if(!empty($item['p3_ech'])){
+                                    $nbr_ech = $item['p3_ech'];
+                                }
+                                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
+                            }
+                        // *****************  END PRODUIT 03  *****************
+
+                        //*****************  BEGIN DECLARATION  *****************
+                        $produit_id = NULL;
+                        $feedback_id = NULL;
+                        $nbr_ech = 0;
+                        //*****************  END DECLARATION  *****************
+
+                        // *****************  BEGIN PRODUIT 04  *****************
+                            //VERIFY [NAME_PRODUCT, FEEDBACK_PRODUCT, NBR_ECH] AND INSERT THEM ON DATABASE
+                            if (!empty($item['p4_presente'])){
+
+                                $produit_id = Functions::search_product_id($item['p4_presente']);
+                                if(!empty($item['p4_feedback'])){
+                                    $feedback_id = Functions::create_feedback($item['p4_feedback']);
+                                }
+                                if(!empty($item['p4_ech'])){
+                                    $nbr_ech = $item['p4_ech'];
+                                }
+                                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
+                            }
+                        // *****************  END PRODUIT 04  *****************
+
+                        //*****************  BEGIN DECLARATION  *****************
+                        $produit_id = NULL;
+                        $feedback_id = NULL;
+                        $nbr_ech = 0;
+                        //*****************  END DECLARATION  *****************
+
+                        // *****************  BEGIN PRODUIT 05  *****************
+                            //VERIFY [NAME_PRODUCT, FEEDBACK_PRODUCT, NBR_ECH] AND INSERT THEM ON DATABASE
+                            if (!empty($item['p5_presente'])){
+
+                                $produit_id = Functions::search_product_id($item['p5_presente']);
+                                if(!empty($item['p5_feedback'])){
+                                    $feedback_id = Functions::create_feedback($item['p5_feedback']);
+                                }
+                                if(!empty($item['p5_ech'])){
+                                    $nbr_ech = $item['p5_ech'];
+                                }
+                                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
+                            }
+                        // *****************  END PRODUIT 05  *****************
+
+
+                    });
+
+                }else{
+                    var_dump("THERE IS NO LINE OF VISITE TO ADD, VERIFY DATES");
                 }
-                Functions::create_visite_med_product($last_visite_id, $produit_id, $feedback_id , $nbr_ech);
-            }
 
-            //echo $item;
-            // #################  END PRODUIT 01  #################
+        // echo "<br> ############## RapportMed ############ <br>";
+        // var_dump($collection);
+        // echo "<br> ########################## <br>";
 
-            /*if (!empty($item['p2_presente'])) {
-                echo $item['p2_presente'] . '<br>';
-                echo $item['p2_feedback'] . '<br>';
-                echo $item['p2_ech'] . '<br>';
-            }
-
-            if (!empty($item['p3_presente'])) {
-                echo $item['p3_presente'] . '<br>';
-                echo $item['p3_feedback'] . '<br>';
-                echo $item['p3_ech'] . '<br>';
-            }
-
-            if (!empty($item['p4_presente'])) {
-                echo $item['p4_presente'] . '<br>';
-                echo $item['p4_feedback'] . '<br>';
-                echo $item['p4_ech'] . '<br>';
-            }
-
-            if (!empty($item['p5_presente'])) {
-                echo $item['p5_presente'] . '<br>';
-                echo $item['p5_feedback'] . '<br>';
-                echo $item['p5_ech'] . '<br>';
-            }*/
-            // END PRODUIT
-
-            //echo $item['materiel_promotion'].'<br>';
-            //echo $item['invitation_promise'].'<br>';
-
-            //echo $item['visite_individuelledouble'].'<br>';
-
-            //echo '<br><br>###################<br><br>';
-            //echo $key.'<br><br><br><br>';
-
-
-            //echo $last_visite_id;
-        });
-
-        /*$post = Specialite::latest('specialite_id')->first();
-        dd($post->libelle);*/
 
     }
 

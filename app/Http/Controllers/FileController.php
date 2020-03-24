@@ -20,15 +20,16 @@ class FileController extends Controller
         //return view('import.index');
 
 
-            //$import = new FileImport();
+            $import = new FileImport();
             //,'Rapport Ph'
-            //$import->sheets('Rapport Med');
+            //$import->sheets('Liste Med','Rapport Med');
+            $import->onlySheets('Liste Med', 'Rapport Med');
             //$import->convert('xls');
         /*
             Excel::import($import, 'users.xlsx');
         */
 
-            Excel::import(new FileImport, $request->file('import_file'));
+            Excel::import($import, $request->file('import_file'));
             //dd($table);
 
             //############################################"
