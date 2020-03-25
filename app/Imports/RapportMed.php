@@ -10,10 +10,10 @@ use App\VisiteMedical;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
+//use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
+class RapportMed implements ToCollection, WithHeadingRow
 {
 
     public function Collection(Collection $collection)
@@ -48,7 +48,7 @@ class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 
                 if ($visites->isEmpty()) {
                     //IF THERE IS NO VISITE TO ADD TO DATABASE SHOW ALERT MESSAGE !
-                    dd("NOTHING TO ADD TO DATABASE !");
+                    print_r(" <b><span style='color:#efe400;'>Ooops</span></b> : <i>NOTHING TO ADD TO DATABASE ! VERIFY YOUR VISIT DATE</i>");
                 }
             }else{
                 //*****************  BEGIN CATCH VISITES [REALISE / REALISE HORS PLAN]  *****************
@@ -59,7 +59,7 @@ class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 
                 if(!empty($visites)){
                     //TO VERIFY IF THERE IS ANY LINE OF VISITE TO ADD INTO DATABASE
-                    $visites->each(function ($item) {
+                    $visites->each(function ($item, $count=1) {
 
                         //*****************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  *****************
                             $ID_USER = 2;
@@ -68,7 +68,19 @@ class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
 
                         //*****************  BEGIN MEDECIN  *****************
                             //SEARCH FOR NAME OF MEDECIN AND RETURN THE ID
+                            //IGNORE VISIT AFTER VERIFING ID OF MEDECINE IF DOES NOT EXISTS AND RETURNS NULL VALUE ...
+                            //SHOW MSG ALERT TO VERIFY COLUMN [nom prenom, nom, prenom]
                             $medecin_id = Functions::search_medecin_id($item['nom_prenom']);
+                            if (empty($medecin_id)) {
+                                print_r("<br><b><span style='color:#efe400;'>Ooops</b></span> : <i>VERIFIER CETTE VISITE : <br>
+                                    Date : ".Date::excelToDateTimeObject($item['date_de_visite'])->format('Y-m-d').
+                                "<br>NOM PRENOM : ".($item['nom_prenom'] == "" ? "NULL" : $item['nom_prenom']).
+                                "<br>NOMBRE DE LIGNE (SOUS EXCEL) : ".($count+1).
+                                "<br><span style='color:Red;'><b><u>Important</u></b></span> : Verifier les colonnes [ nom prenom, nom, prenom ] dans [ Liste Med ] et [ nom prenom ] dans [ Rapport Med ] du fichier Excel !</i><br><br>");
+                                //TRUE MEANS CONTINUE TO THE NEXT ELEMET ON FOREACH TABLE
+                                return true;
+                            }
+
                         //*****************  END MEDECIN  *****************
 
                         //*****************  BEGIN ETAT  *****************
@@ -195,7 +207,7 @@ class RapportMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
                     });
 
                 }else{
-                    var_dump("THERE IS NO LINE OF VISITE TO ADD, VERIFY DATES");
+                    print_r("<br><b><span style='color:#efe400;'>Ooops</span></b> : <i>THERE IS NO LINE OF VISITE TO ADD, VERIFY DATES</i><br>");
                 }
 
         // echo "<br> ############## RapportMed ############ <br>";

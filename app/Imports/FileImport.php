@@ -18,8 +18,8 @@ class FileImport implements WithMultipleSheets, SkipsUnknownSheets
     public function conditionalSheets(): array
     {
         return [
-            'Rapport Med' => new RapportMed(),
             'Liste Med' => new ListeMed(),
+            'Rapport Med' => new RapportMed(),
         ];
     }
 
