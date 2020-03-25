@@ -22,6 +22,10 @@ class RapportMed implements ToCollection, WithHeadingRow
          * i will use in this Test [ ID USER = 2 ] witch is EL MEHDI ID
          * */
 
+         //******************  BEGIN MEDECIN NAME  ******************
+            $GLOBALS['error_medecin'] = false;    
+         //******************  END MEDECIN NAME  ******************
+
         //*****************  BEGIN CATCH LAST DATE  *****************
             //CATCH DATE OF LAST INSERTED VISITE AND CHANGE FORMAT
             $last_date_visite_DB = VisiteMedical::select('date_visite')
@@ -56,11 +60,40 @@ class RapportMed implements ToCollection, WithHeadingRow
                 //*****************  END CATCH VISITES [REALISE / REALISE HORS PLAN] *****************
             }
 
+            $visites->each(function ($item, $count) {
+                $count++; 
+                //*****************  BEGIN MEDECIN  *****************
+                    //SEARCH FOR NAME OF MEDECIN AND RETURN THE ID
+                    //IGNORE VISIT AFTER VERIFING ID OF MEDECINE IF DOES NOT EXISTS AND RETURNS NULL VALUE ...
+                    //SHOW MSG ALERT TO VERIFY COLUMN [nom prenom, nom, prenom]
+                    $medecin_id = Functions::search_medecin_id($item['nom_prenom']);
+                    if (empty($medecin_id)) {
+                        $date = NULL;
+                        if (gettype($item['date_de_visite']) == 'integer') {
+                            $date = Date::excelToDateTimeObject($item['date_de_visite'])->format('Y-m-d');
+                        }else{
+                            $date = $item['date_de_visite'];
+                        }
+                        print_r("<br><b><span style='color:#efe400;'>Ooops</b></span> : <i>VERIFIER CETTE VISITE : <br>
+                            Date : ".$date.
+                        "<br>NOM PRENOM : ".($item['nom_prenom'] == "" ? "NULL" : $item['nom_prenom']).
+                        "<br>NOMBRE DE LIGNE (SOUS EXCEL) : ".($count+1).
+                        "<br><span style='color:Red;'><b><u>Important</u></b></span> : Verifier les colonnes [ nom prenom, nom, prenom ] dans [ Liste Med ] et [ nom prenom ] dans [ Rapport Med ] du fichier Excel !</i><br><br>");
+                        //TRUE MEANS CONTINUE TO THE NEXT ELEMET ON FOREACH TABLE
+                        $GLOBALS['error_medecin']=true;
+                        return true;
+                    }
+                //*****************  END MEDECIN  *****************
+            });
+
+            if ($GLOBALS['error_medecin']) {
+                $visites = false;
+            }
+
 
                 if(!empty($visites)){
                     //TO VERIFY IF THERE IS ANY LINE OF VISITE TO ADD INTO DATABASE
-                    $visites->each(function ($item, $count=1) {
-
+                    $visites->each(function ($item) {
                         //*****************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  *****************
                             $ID_USER = 2;
                             $created_by="EL MEHDI AIT FAKIR";
@@ -68,21 +101,9 @@ class RapportMed implements ToCollection, WithHeadingRow
 
                         //*****************  BEGIN MEDECIN  *****************
                             //SEARCH FOR NAME OF MEDECIN AND RETURN THE ID
-                            //IGNORE VISIT AFTER VERIFING ID OF MEDECINE IF DOES NOT EXISTS AND RETURNS NULL VALUE ...
-                            //SHOW MSG ALERT TO VERIFY COLUMN [nom prenom, nom, prenom]
                             $medecin_id = Functions::search_medecin_id($item['nom_prenom']);
-                            if (empty($medecin_id)) {
-                                print_r("<br><b><span style='color:#efe400;'>Ooops</b></span> : <i>VERIFIER CETTE VISITE : <br>
-                                    Date : ".Date::excelToDateTimeObject($item['date_de_visite'])->format('Y-m-d').
-                                "<br>NOM PRENOM : ".($item['nom_prenom'] == "" ? "NULL" : $item['nom_prenom']).
-                                "<br>NOMBRE DE LIGNE (SOUS EXCEL) : ".($count+1).
-                                "<br><span style='color:Red;'><b><u>Important</u></b></span> : Verifier les colonnes [ nom prenom, nom, prenom ] dans [ Liste Med ] et [ nom prenom ] dans [ Rapport Med ] du fichier Excel !</i><br><br>");
-                                //TRUE MEANS CONTINUE TO THE NEXT ELEMET ON FOREACH TABLE
-                                return true;
-                            }
-
                         //*****************  END MEDECIN  *****************
-
+     
                         //*****************  BEGIN ETAT  *****************
                             //PLAN - REALISE - REALISE HORS PLAN
                             $etat = $item['planrealise'];
@@ -203,7 +224,7 @@ class RapportMed implements ToCollection, WithHeadingRow
                             }
                         // *****************  END PRODUIT 05  *****************
 
-
+                   
                     });
 
                 }else{
