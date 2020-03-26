@@ -28,8 +28,19 @@ class FileController extends Controller
         /*
             Excel::import($import, 'users.xlsx');
         */
+            $files = $request->file('import_file');
 
-            Excel::import($import, $request->file('import_file'));
+            if($request->hasFile('import_file'))
+            {
+                foreach ($files as $file) {
+                    Excel::import($import, $file);;
+                }
+            }
+
+
+        
+
+
             //dd($table);
 
             //############################################"

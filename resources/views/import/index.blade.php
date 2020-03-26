@@ -10,7 +10,7 @@
             @csrf
             <div class="form-group">
               <label for="exampleFormControlFile1">File input</label>
-              <input type="file" name="import_file" class="form-control-file">
+              <input type="file" name="import_file[]" class="form-control-file" multiple>
               <input type="submit" value="Import" class="form-control-file">
             </div>
         </form>
