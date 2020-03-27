@@ -49,7 +49,7 @@ class FeedbackController extends Controller
     public function store(Request $request)
     {
         //
-        $validator = Validator::make($req->all(),[
+        $validator = Validator::make($request->all(),[
 
             'feedback_libelle'=>'required',
 
@@ -63,7 +63,7 @@ class FeedbackController extends Controller
             return redirect()->back()->withErrors($validator);
         }
         $feedback = new Feedback();
-        $feedback->libelle = $req->input('feedback_libelle');
+        $feedback->libelle = $request->input('feedback_libelle');
         $feedback->save();
         return redirect()->back()->with('status','le feedback a été ajouté avec succès.');
 

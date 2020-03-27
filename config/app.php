@@ -165,8 +165,11 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+<<<<<<< HEAD
         Yajra\DataTables\DataTablesServiceProvider::class,
 
+=======
+>>>>>>> deb2ddd47ec4e5108b8b60e58981807618dcef6f
 
         /*
          * Package Service Providers...
@@ -233,8 +236,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+<<<<<<< HEAD
         'Datatables' => yajra\Datatables\Datatables::class,
 
+=======
+>>>>>>> deb2ddd47ec4e5108b8b60e58981807618dcef6f
     ],
 
 ];

@@ -77,7 +77,6 @@
                             <button type="submit" class="btn btn-primary mr-2 float-right">Valider</button>
                     </div>
               </div>
-
             </form>
           </div>
         </div>
