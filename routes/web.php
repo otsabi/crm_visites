@@ -9,10 +9,21 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use \App\User;
+
+
+//routes pour l'export des données en excel
+Route::get('/export/excel', 'ExportExcelController@export')->name('exportexcel');
+Route::get('/export/index','ExportExcelController@index');
+
+Route::get('/import/index','ImportExcelController@index');
+Route::post('/import/excel','ImportExcelController@import')->name('importexcel');
 
 Route::get('/test', function(){
    return App\User::find(18)->collaborateurs()->get();
 });
+
+
 
 Route::get('/', function(){
     return redirect()->route(session('dashboardUrl'));
