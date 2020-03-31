@@ -95,5 +95,5 @@ Route::get('dash/visites/ville','HomeController@visiteByVille');
 
 /*  Import Excel File Route */
 
-Route::post('/import','FileController@import')->name('import');
-Route::get('/test_import','FileController@index');
+Route::post('/import','RapportMedController@import')->name('import');
+Route::get('/test_import','RapportMedController@index')->name('test_import');

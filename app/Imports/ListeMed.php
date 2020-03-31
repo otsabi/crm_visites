@@ -66,7 +66,7 @@ class ListeMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
             
             //ADD MEDECIN, IF THERE ID ANY NEW MEDECIN DOES NOT EXISTS ON DB
             $medecins_excel->each(function ($item) {
-
+                
                 //******************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  ******************
                     $ID_USER = 2;
                     $created_by="EL MEHDI AIT FAKIR";
@@ -108,5 +108,6 @@ class ListeMed implements ToCollection, WithHeadingRow, WithCalculatedFormulas
         // echo "<br> ########################## <br>";
 
     }
+
 
 }

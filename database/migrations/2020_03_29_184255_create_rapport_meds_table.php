@@ -20,36 +20,36 @@ class CreateRapportMedsTable extends Migration
             $table->string('Specialité');
             $table->string('Etablissement');
             $table->string('Potentiel');
-            $table->unsignedBigInteger('Montant_Inv_Précédents');
+            $table->unsignedBigInteger('Montant_Inv_Précédents')->nullable();
             $table->string('Zone_Ville');
 
-            $table->string('P1_présenté');
-            $table->string('P1_Feedback');
-            $table->integer('P1_Ech');
+            $table->string('P1_présenté')->nullable();
+            $table->string('P1_Feedback')->nullable();
+            $table->integer('P1_Ech')->default(0);
 
-            $table->string('P2_présenté');
-            $table->string('P2_Feedback');
-            $table->integer('P2_Ech');
+            $table->string('P2_présenté')->nullable();
+            $table->string('P2_Feedback')->nullable();
+            $table->integer('P2_Ech')->default(0);
 
-            $table->string('P3_présenté');
-            $table->string('P3_Feedback');
-            $table->integer('P3_Ech');
+            $table->string('P3_présenté')->nullable();
+            $table->string('P3_Feedback')->nullable();
+            $table->integer('P3_Ech')->default(0);
 
-            $table->string('P4_présenté');
-            $table->string('P4_Feedback');
-            $table->integer('P4_Ech');
+            $table->string('P4_présenté')->nullable();
+            $table->string('P4_Feedback')->nullable();
+            $table->integer('P4_Ech')->default(0);
 
-            $table->string('P5_présenté');
-            $table->string('P5_Feedback');
-            $table->integer('P5_Ech');
+            $table->string('P5_présenté')->nullable();
+            $table->string('P5_Feedback')->nullable();
+            $table->integer('P5_Ech')->default(0);
 
-            $table->string('Materiel_Promotion');
-            $table->string('Invitation_promise');
+            $table->string('Materiel_Promotion')->nullable();
+            $table->string('Invitation_promise')->nullable();
             $table->string('Plan/Réalisé');
-            $table->string('Visite_Individuelle/Double');
+            //$table->string('Visite_Individuelle/Double')->nullable();;
 
-            $table->string('DELEGUE');
-            $table->integer('DELEGUE_id');
+            $table->string('DELEGUE')->nullable();;
+            $table->integer('DELEGUE_id')->nullable();;
 
             $table->timestamps();
         });

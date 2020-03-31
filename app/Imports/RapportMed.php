@@ -23,6 +23,7 @@ class RapportMed implements ToCollection, WithHeadingRow
          * */
 
          //******************  BEGIN MEDECIN NAME  ******************
+            //FALSE THAT'S MEAN THERE IS NO ERROR ON RAPPORT MED !
             $GLOBALS['error_medecin'] = false;    
          //******************  END MEDECIN NAME  ******************
 
@@ -94,6 +95,7 @@ class RapportMed implements ToCollection, WithHeadingRow
                 if(!empty($visites)){
                     //TO VERIFY IF THERE IS ANY LINE OF VISITE TO ADD INTO DATABASE
                     $visites->each(function ($item) {
+
                         //*****************  CHANGE IT INTO INFO OF AUTH USER [AFTER]  *****************
                             $ID_USER = 2;
                             $created_by="EL MEHDI AIT FAKIR";
@@ -226,10 +228,13 @@ class RapportMed implements ToCollection, WithHeadingRow
 
                    
                     });
+                  
 
-                }else{
-                    print_r("<br><b><span style='color:#efe400;'>Ooops</span></b> : <i>THERE IS NO LINE OF VISITE TO ADD, VERIFY DATES</i><br>");
                 }
+                // else{
+                //     //print_r("<br><b><span style='color:#efe400;'>Ooops</span></b> : <i>THERE IS NO LINE OF VISITE TO ADD, VERIFY DATES</i><br>");
+                //     print_r("<br><b><span style='color:#efe400;'>Ooops</span></b> : <i>VISITE INSERER AVEC SUCCES.</i><br>");
+                // }
 
         // echo "<br> ############## RapportMed ############ <br>";
         // var_dump($collection);

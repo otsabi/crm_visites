@@ -190,6 +190,14 @@
 
                         </li>
 
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{route('test_import')}}">
+                                <i class="mdi mdi-view-quilt menu-icon"></i>
+                                <span class="menu-title">Import</span>
+                            </a>
+
+                        </li>
+
                       @endadmin
 
                        @if(!Auth::user()->isAdmin())

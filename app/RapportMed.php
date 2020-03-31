@@ -9,7 +9,8 @@ class RapportMed extends Model
     //
     protected $table='rapport_meds';
     protected $primaryKey='rapport_med_id';
-
-    protected $guarded = ['*'];
+    //protected $fillable=['*'];
+    protected $guarded = ['rapport_med_id']; 
+    //protected $guarded = ['*'];
 
 }
