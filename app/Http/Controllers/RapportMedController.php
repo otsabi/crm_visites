@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\RapportMed;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Carbon\Carbon;
 
 class RapportMedController extends Controller
 {
@@ -23,9 +24,34 @@ class RapportMedController extends Controller
                                 //THIS FIRST IS FOR LARAVEL-EXCEL PACKAGE
                                 //Excel::import(new FileImport, $file);
                                 (new FastExcel)->sheet(3)->import($file, function ($line) {
+                                    if (!empty($line["Nom Prenom"])) {
+                                        
+                                    
+                                    if(gettype($line["Montant Inv Précédents"]) == 'integer' && $line["Montant Inv Précédents"] == 0 ){
+                                        $line["Montant Inv Précédents"] = NULL;
+                                    }elseif(gettype($line["Montant Inv Précédents"]) == 'string'){
+                                        $line["Montant Inv Précédents"] = NULL;
+                                    }
+                                    if (empty($line["P1 Ech"])) {
+                                        $line["P1 Ech"]=0;
+                                    }
+                                    if (empty($line["P2 Ech"])) {
+                                        $line["P2 Ech"]=0;
+                                    }
+                                    if (empty($line["P3 Ech"])) {
+                                        $line["P3 Ech"]=0;
+                                    }
+                                    if (empty($line["P4 Ech"])) {
+                                        $line["P4 Ech"]=0;
+                                    }
+                                    if (empty($line["P5 Ech"])) {
+                                        $line["P5 Ech"]=0;
+                                    }
+                                    
                                      return RapportMed::create([
                                         
-                                    'Date_de_visite' => Date::excelToDateTimeObject($line["Date de visite"])->format('Y-m-d H:i:s'),
+                                    //'Date_de_visite' => $line["Date de visite"]->format('Y-m-d H:i:s'),
+                                    'Date_de_visite' => Carbon::parse($line['Date de visite'])->toDateTimeString(),
                                     'Nom_Prenom' => $line["Nom Prenom"],
                                     'Specialité' => $line["Specialité"],
                                     'Etablissement' => $line["Etablissement"],
@@ -61,7 +87,10 @@ class RapportMedController extends Controller
                                     'DELEGUE_id' => 1
        
                                     ]);
+                                    
+                                    }
 
+                                    //var_dump($line["Montant Inv Précédents"]);
                                     //dd($line);
 
                                     //  $date = DateTime::createFromFormat('j-M-Y', $line["Date de visite"]);

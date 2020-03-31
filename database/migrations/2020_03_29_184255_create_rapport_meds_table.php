@@ -15,7 +15,7 @@ class CreateRapportMedsTable extends Migration
     {
         Schema::create('rapport_meds', function (Blueprint $table) {
             $table->bigIncrements('rapport_med_id');
-            $table->date('Date_de_visite');
+            $table->dateTime('Date_de_visite');
             $table->string('Nom_Prenom');
             $table->string('Specialité');
             $table->string('Etablissement');
