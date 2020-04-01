@@ -97,3 +97,5 @@ Route::get('dash/visites/ville','HomeController@visiteByVille');
 
 Route::post('/import','RapportMedController@import')->name('import');
 Route::get('/test_import','RapportMedController@index')->name('test_import');
+Route::get('/show_rapport_med','RapportMedController@show')->name('show_rapport_med');
+Route::get('/dataRapportMed', 'RapportMedController@getRapportMed')->name('dataRapportMed');

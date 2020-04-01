@@ -15,7 +15,7 @@ class CreateRapportMedsTable extends Migration
     {
         Schema::create('rapport_meds', function (Blueprint $table) {
             $table->bigIncrements('rapport_med_id');
-            $table->dateTime('Date_de_visite');
+            $table->date('Date_de_visite');
             $table->string('Nom_Prenom');
             $table->string('Specialité');
             $table->string('Etablissement');
@@ -25,23 +25,23 @@ class CreateRapportMedsTable extends Migration
 
             $table->string('P1_présenté')->nullable();
             $table->string('P1_Feedback')->nullable();
-            $table->integer('P1_Ech')->default(0);
+            $table->integer('P1_Ech')->nullable();
 
             $table->string('P2_présenté')->nullable();
             $table->string('P2_Feedback')->nullable();
-            $table->integer('P2_Ech')->default(0);
+            $table->integer('P2_Ech')->nullable();
 
             $table->string('P3_présenté')->nullable();
             $table->string('P3_Feedback')->nullable();
-            $table->integer('P3_Ech')->default(0);
+            $table->integer('P3_Ech')->nullable();
 
             $table->string('P4_présenté')->nullable();
             $table->string('P4_Feedback')->nullable();
-            $table->integer('P4_Ech')->default(0);
+            $table->integer('P4_Ech')->nullable();
 
             $table->string('P5_présenté')->nullable();
             $table->string('P5_Feedback')->nullable();
-            $table->integer('P5_Ech')->default(0);
+            $table->integer('P5_Ech')->nullable();
 
             $table->string('Materiel_Promotion')->nullable();
             $table->string('Invitation_promise')->nullable();

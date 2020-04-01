@@ -25,8 +25,8 @@ class RapportMedController extends Controller
                                 //Excel::import(new FileImport, $file);
                                 (new FastExcel)->sheet(3)->import($file, function ($line) {
                                     if (!empty($line["Nom Prenom"])) {
-                                        
-                                    
+
+
                                     if(gettype($line["Montant Inv Précédents"]) == 'integer' && $line["Montant Inv Précédents"] == 0 ){
                                         $line["Montant Inv Précédents"] = NULL;
                                     }elseif(gettype($line["Montant Inv Précédents"]) == 'string'){
@@ -47,9 +47,9 @@ class RapportMedController extends Controller
                                     if (empty($line["P5 Ech"])) {
                                         $line["P5 Ech"]=0;
                                     }
-                                    
+
                                      return RapportMed::create([
-                                        
+
                                     //'Date_de_visite' => $line["Date de visite"]->format('Y-m-d H:i:s'),
                                     'Date_de_visite' => Carbon::parse($line['Date de visite'])->toDateTimeString(),
                                     'Nom_Prenom' => $line["Nom Prenom"],
@@ -85,9 +85,9 @@ class RapportMedController extends Controller
                                     //'Visite_Individuelle/Double' => $line['Name'],
                                     'DELEGUE' => "EL MEHDI AIT FAKIR",
                                     'DELEGUE_id' => 1
-       
+
                                     ]);
-                                    
+
                                     }
 
                                     //var_dump($line["Montant Inv Précédents"]);
@@ -96,16 +96,24 @@ class RapportMedController extends Controller
                                     //  $date = DateTime::createFromFormat('j-M-Y', $line["Date de visite"]);
                                     //  echo $date->format('Y-m-d');
                                      //var_dump(Date::excelToDateTimeObject($line["Date de visite"])->format('Y-m-d'));
-                                     
+
                                      //$date = $line["Date de visite"];
 
                                      //var_dump($date->date);
                                      //print_r($date);
                                         //echo $date["date"];
                                 });
-                                
+
                             }
                         }
 
                     }
+
+    public function show(){
+        return view('import.show');
+    }
+    public function getRapportMed(){
+        $rapportMed = RapportMed::all();
+        return response()->json($rapportMed);
+    }
 }
