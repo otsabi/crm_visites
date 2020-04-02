@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="{{asset('theme/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 @endpush
 
+
+
 @section('content')
 
 
