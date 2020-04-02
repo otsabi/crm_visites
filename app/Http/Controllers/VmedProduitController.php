@@ -12,6 +12,10 @@ class VmedProduitController extends Controller
         $this->middleware('role:DSM|KAM|DM');
     }
 
+
+    
+
+    
     /**
      * Display a listing of the resource.
      *
