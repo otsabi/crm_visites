@@ -5,9 +5,6 @@
 @endpush
 
 @section('content')
-
-
-
 <div class="row">
         <div class="col-sm-12">
                 @if(session('status'))

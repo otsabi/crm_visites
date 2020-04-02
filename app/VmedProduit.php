@@ -15,4 +15,7 @@ class VmedProduit extends Pivot
         return $this->belongsTo('App\Feedback','feedback_id');
     }
 
+
+    
+
 }
