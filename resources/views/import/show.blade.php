@@ -2,15 +2,18 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{asset('theme/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
     <style>
-    td.details-control {
-    background: url('https://www.pngitem.com/pimgs/m/112-1121197_ios-add-icon-green-hd-png-download.png') no-repeat center center;
-    cursor: pointer;
-}
-tr.details td.details-control {
-    background: url('../resources/details_close.png') no-repeat center center;
-}
+
+        td.details-control {
+            background: url('{{asset('theme/images/plus.png')}}') no-repeat center center;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            background: url('{{asset('theme/images/remove.png')}}') no-repeat center center;
+        }
+
     </style>
 @endpush
 
@@ -76,55 +79,16 @@ tr.details td.details-control {
 
 @endsection
 
-@section('modals')
-    <!-- Modal -->
-    <div class="modal fade" id="deleteModel" tabindex="-1" role="dialog" aria-labelledby="deleteModel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title" id="exampleModalLabel">Produits : <span></span> </h6>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h6>Etes-vous sûr que vous voulez supprimer ce Produit ?</h6>
-                    <form action="" method="post" id="delete_form">
-                        @csrf
-                        @method('delete')
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button onclick="document.getElementById('delete_form').submit()" type="submit" class="btn btn-danger">Supprimer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+
 
 @push('scripts')
     <!--<script type="text/javascript" src="{{asset('theme/vendors/datatables.net/jquery.dataTables.js')}}"></script>-->
     <!--<script src="{{asset('theme/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>-->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>-->
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <!--<script src="{{asset('theme/js/data-table.js')}}"></script>-->
 
-    <script src="{{asset('theme/js/data-table.js')}}"></script>
-    <script>
-        $(document).ready(function () {
-
-            $('#deleteModel').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget) ;// Button that triggered the modal
-                var produit_id = button.data('whatever'); // Extract info from data-* attributes
-                var code_libelle = button.data('produit'); // Extract info from data-* attributes
-                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-                var modal = $(this);
-                modal.find('.modal-body>form').attr('action','/admin/products/'+produit_id);
-                modal.find('.modal-title>span').text(code_libelle);
-
-            })
-        });
-    </script>
     <script>
 
         function format ( d ) {
@@ -203,6 +167,7 @@ tr.details td.details-control {
                     {"data": "Potentiel" },
                     {"data": "Etablissement" },
                     {"data": "DELEGUE" }
+
                 ]
               
                 
